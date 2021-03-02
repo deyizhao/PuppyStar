@@ -1,3 +1,18 @@
+/*
+ * Copyright 2021 The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.example.androiddevchallenge.ui
 
 import androidx.compose.animation.core.Animatable
@@ -5,15 +20,15 @@ import androidx.compose.animation.core.spring
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
@@ -21,13 +36,13 @@ import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
-import androidx.compose.ui.Alignment
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
@@ -63,22 +78,27 @@ fun PuppyPage(
                 WeTopBar(puppy.name, onBack)
             },
             bottomBar = {
-                ChatBottomBar(onBombClicked = {
-                    viewModel.boom()
-                    shakingTime += 1
-                })
+                ChatBottomBar(
+                    onBombClicked = {
+                        viewModel.boom()
+                        shakingTime += 1
+                    }
+                )
             }
         ) { paddingValues ->
             val shakingOffset = remember { Animatable(0f) }
-            LaunchedEffect(key1 = shakingTime, block = {
-                if (shakingTime != 0) {
-                    shakingOffset.animateTo(
-                        0f,
-                        animationSpec = spring(0.3f, 600f),
-                        initialVelocity = -2000f
-                    )
+            LaunchedEffect(
+                key1 = shakingTime,
+                block = {
+                    if (shakingTime != 0) {
+                        shakingOffset.animateTo(
+                            0f,
+                            animationSpec = spring(0.3f, 600f),
+                            initialVelocity = -2000f
+                        )
+                    }
                 }
-            })
+            )
             Spacer(
                 Modifier
                     .background(MyTheme.colors.chatPage)
@@ -137,16 +157,19 @@ fun ChatBottomBar(onBombClicked: () -> Unit) {
 @Composable
 fun MessageItem(msg: Msg, shakingTime: Int, shakingLevel: Int) {
     val shakingAngleBubble = remember { Animatable(0f) }
-    LaunchedEffect(key1 = shakingTime, block = {
-        if (shakingTime != 0) {
-            delay(shakingLevel.toLong() * 30)
-            shakingAngleBubble.animateTo(
-                0f,
-                animationSpec = spring(0.4f, 500f),
-                initialVelocity = 1200f / (1 + shakingLevel * 0.4f)
-            )
+    LaunchedEffect(
+        key1 = shakingTime,
+        block = {
+            if (shakingTime != 0) {
+                delay(shakingLevel.toLong() * 30)
+                shakingAngleBubble.animateTo(
+                    0f,
+                    animationSpec = spring(0.4f, 500f),
+                    initialVelocity = 1200f / (1 + shakingLevel * 0.4f)
+                )
+            }
         }
-    })
+    )
     if (msg.from == User.Me) {
         Row(
             Modifier
@@ -155,7 +178,8 @@ fun MessageItem(msg: Msg, shakingTime: Int, shakingLevel: Int) {
             horizontalArrangement = Arrangement.End
         ) {
             val bubbleColor = MyTheme.colors.bubbleMe
-            Text(msg.text,
+            Text(
+                msg.text,
                 Modifier
                     .graphicsLayer(
                         rotationZ = shakingAngleBubble.value,
@@ -180,7 +204,8 @@ fun MessageItem(msg: Msg, shakingTime: Int, shakingLevel: Int) {
                         drawPath(bubble, bubbleColor)
                     }
                     .padding(20.dp, 10.dp),
-                color = MyTheme.colors.textPrimary)
+                color = MyTheme.colors.textPrimary
+            )
             Image(
                 painterResource(msg.from.avatar),
                 contentDescription = "Avatar Me",
@@ -211,7 +236,8 @@ fun MessageItem(msg: Msg, shakingTime: Int, shakingLevel: Int) {
                     .clip(RoundedCornerShape(4.dp))
             )
             val bubbleColor = MyTheme.colors.bubbleOthers
-            Text(msg.text,
+            Text(
+                msg.text,
                 Modifier
                     .graphicsLayer(
                         rotationZ = -shakingAngleBubble.value,
@@ -236,7 +262,8 @@ fun MessageItem(msg: Msg, shakingTime: Int, shakingLevel: Int) {
                         drawPath(bubble, bubbleColor)
                     }
                     .padding(20.dp, 10.dp),
-                color = MyTheme.colors.textPrimary)
+                color = MyTheme.colors.textPrimary
+            )
         }
     }
 }
