@@ -17,45 +17,65 @@ package com.example.androiddevchallenge
 
 import android.os.Bundle
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.layout
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.dp
+import androidx.core.view.WindowCompat
+import com.example.androiddevchallenge.ui.Home
+import com.example.androiddevchallenge.ui.MainViewModel
 import com.example.androiddevchallenge.ui.theme.MyTheme
+import kotlin.math.roundToInt
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+        val viewModel: MainViewModel by viewModels()
+
         setContent {
-            MyTheme {
-                MyApp()
+            MyTheme(theme = viewModel.theme) {
+                Home()
             }
+        }
+    }
+
+    override fun onBackPressed() {
+        val viewModel: MainViewModel by viewModels()
+        if (viewModel.openModule != null) {
+            viewModel.dismissPuppyDetail()
+        } else {
+            super.onBackPressed()
         }
     }
 }
 
-// Start building your app here!
-@Composable
-fun MyApp() {
-    Surface(color = MaterialTheme.colors.background) {
-        Text(text = "Ready... Set... GO!")
+fun Modifier.percentOffsetX(percent: Float) = this.layout { measurable, constraints ->
+    val placeable = measurable.measure(constraints)
+    layout(placeable.width, placeable.height) {
+        placeable.placeRelative(IntOffset((placeable.width * percent).roundToInt(), 0))
     }
 }
 
-@Preview("Light Theme", widthDp = 360, heightDp = 640)
-@Composable
-fun LightPreview() {
-    MyTheme {
-        MyApp()
+fun Modifier.unread(read: Boolean, badgeColor: Color) = this
+    .drawWithContent {
+        drawContent()
+        if (!read) {
+            drawCircle(
+                color = badgeColor,
+                radius = 5.dp.toPx(),
+                center = Offset(size.width - 1.dp.toPx(), 1.dp.toPx()),
+            )
+        }
     }
-}
-
-@Preview("Dark Theme", widthDp = 360, heightDp = 640)
-@Composable
-fun DarkPreview() {
-    MyTheme(darkTheme = true) {
-        MyApp()
-    }
-}
